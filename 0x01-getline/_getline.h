@@ -31,7 +31,7 @@ struct resizing_string
  * @end: ending point to fill a line
  * @next: next element in linked list
  */
-struct file_data
+typedef struct file_data
 {
 	int fd;
 	int delim;
@@ -40,13 +40,13 @@ struct file_data
 	size_t start;
 	size_t end;
 	struct file_data *next;
-};
+} file_data_t;
 
 
 int read_file(struct file_data *file);
 int fill_array(struct resizing_string *arr, char *value, size_t size);
 void free_files(struct file_data *files);
-struct file_data *get_fd(struct file_data **files, int fd);
+file_data_t *get_fd(struct file_data **files, int fd);
 char *_getline(int fd);
 
 #endif

@@ -118,7 +118,7 @@ void free_files(struct file_data *files)
  * @fd: a file descriptor
  * Return: pointer to file
  */
-struct file_data *get_fd(struct file_data **files, int fd)
+file_data_t *get_fd(struct file_data **files, int fd)
 {
 	struct file_data *file_data, *tmp;
 
