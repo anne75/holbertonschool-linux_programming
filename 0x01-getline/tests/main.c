@@ -12,16 +12,36 @@
  */
 int main(void)
 {
-	int fd, i;
+	int fd;
     char *line;
 
-    fd = open("tests/alice2.txt", 0);
-    i = 0;
-    while ((line = _getline(fd)) && i++ < 10)
+    puts("file1");
+    fd = open("tests/emptyfile.txt", 0);
+    while ((line = _getline(fd)))
     {
         printf("%s\n", line);
         free(line);
     }
     close(fd);
+
+    puts("file2");
+    fd = open("tests/main-1.c", 0);
+    while ((line = _getline(fd)))
+    {
+        printf("%s\n", line);
+        free(line);
+    }
+    close(fd);
+
+    /* puts("file3"); */
+    /* fd = open("tests/oups", 0); */
+    /* while ((line = _getline(fd))) */
+    /* { */
+    /*     printf("%s\n", line); */
+    /*     free(line); */
+    /* } */
+    /* close(fd); */
+
+
     return (0);
 }

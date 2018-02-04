@@ -25,13 +25,13 @@ int main(void)
     i = 0;
     while ((line1 = _getline(fd1)))
     {
-        printf("%s\n", line1);
-        free(line1);
-        i++;
-        if (i == 5)
-        {
-            break;
-        }
+	    printf("[%i] %s\n", i, line1);
+	    free(line1);
+	    i++;
+	    if (i == 5)
+	    {
+		    break;
+	    }
     }
     printf("----------quote (first 5 lines)----------\n");
     i = 0;
