@@ -116,7 +116,7 @@ void free_files(struct file_data *files)
  * @fd: a file descriptor
  * Return: pointer to file
  */
-file_data_t *get_fd(struct file_data **files, int fd)
+file_data_t *get_fd(struct file_data **files, const int fd)
 {
 	struct file_data *file_data, *tmp;
 
@@ -137,10 +137,8 @@ file_data_t *get_fd(struct file_data **files, int fd)
 		free_files(*files);
 		return (NULL);
 	}
+	memset(file_data, 0, sizeof(*file_data));
 	file_data->fd = fd;
-	file_data->used = 0;
-	file_data->end = 0;
-	file_data->start = 0;
 	file_data->next = NULL;
 	if (!*files)
 		*files = file_data;
@@ -154,7 +152,8 @@ file_data_t *get_fd(struct file_data **files, int fd)
  * fill_line - fill the line to return
  * @line: struct containing line info
  * @file: struct containing file info
- * Return: 0 on success 1 on error or EOF
+ * Return: 0 on success 1 on error and everything needs
+ * to be freed -1 if end of file to free the file struct
  */
 int fill_line(struct resizing_string *line, file_data_t *file)
 {
@@ -162,6 +161,10 @@ int fill_line(struct resizing_string *line, file_data_t *file)
 	int r;
 
 	check = 0;
+
+	read_file(file);
+	if (!file->used) /* means there is nothing to play with */
+		return (-1);
 	r = file->end - file->start;
 	while (file->delim == 0 && r > 0)
 	{
@@ -178,7 +181,7 @@ int fill_line(struct resizing_string *line, file_data_t *file)
 				   file->buffer + file->start, r);
 	}
 	if (file->delim == EOF)
-		check = 1;
+		check = -1;
 	file->delim = 0, file->start = file->end + 1;
 	file->end = file->used;
 	return (check);
@@ -190,26 +193,26 @@ int fill_line(struct resizing_string *line, file_data_t *file)
  * @fd: file descriptor
  * Return: a line (to free by user)
  */
-char *_getline(int fd)
+char *_getline(const int fd)
 {
-	int check, to_remove;
+	int check;
 	static file_data_t *files; /* holds fd + buffer... */
 	struct resizing_string line; /* output */
 	file_data_t *file, *tmp;
 
-	memset((void *)&line, 0, sizeof(line)), check = to_remove = 0;
+	memset((void *)&line, 0, sizeof(line));
+	check = 0;
 	if (!READ_SIZE)
 		return (NULL);
 	if (fd >= 0)
 	{
 		file = get_fd(&files, fd);
-		read_file(file);
-		if (!file->used) /* means there is nothing to play with */
-			to_remove = 1;
+		if (!file)
+			check = 1;
 		else
 			check = fill_line(&line, file);
 	}
-	if (fd == -1 || check)
+	if (fd == -1 || check == 1)
 	{
 		if (files)
 			free_files(files), files = NULL;
@@ -217,7 +220,7 @@ char *_getline(int fd)
 			free(line.array);
 		return (NULL);
 	}
-	if (to_remove)
+	if (check == -1)
 	{
 		if (files == file)
 			files = file->next;

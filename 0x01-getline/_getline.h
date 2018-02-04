@@ -46,8 +46,8 @@ typedef struct file_data
 int read_file(struct file_data *file);
 int fill_array(struct resizing_string *arr, char *value, size_t size);
 void free_files(struct file_data *files);
-file_data_t *get_fd(struct file_data **files, int fd);
+file_data_t *get_fd(struct file_data **files, const int fd);
 int fill_line(struct resizing_string *line, file_data_t *file);
-char *_getline(int fd);
+char *_getline(const int fd);
 
 #endif
