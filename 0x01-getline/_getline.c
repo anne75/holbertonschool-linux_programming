@@ -9,7 +9,7 @@
  * read_file - possibly read a file, finds delimeters
  * @file: struct containing information about a file
  * Looks for delimeters in a buffer read from a file.
- * Return: number of chars read.
+ * Return: number of chars read or 0.
  */
 int read_file(struct file_data *file)
 {
@@ -17,10 +17,11 @@ int read_file(struct file_data *file)
 	size_t i;
 	char *buffer;
 
+	r = 0;
 	if (file->used == 0 || file->start >= file->used)
 	{
-		memset(file->buffer, 0, BUFSIZE);
-		r = read(file->fd, file->buffer, BUFSIZE);
+		memset(file->buffer, 0, READ_SIZE);
+		r = read(file->fd, file->buffer, READ_SIZE);
 		if (r >= 0)
 			file->used = r;
 		else
@@ -60,17 +61,16 @@ int read_file(struct file_data *file)
 int fill_array(struct resizing_string *arr, char *value, size_t size)
 {
 	int check;
-	/* size_t i; */
 	char *new_array;
 
 	/* puts("fill_array"); */
 	if (arr->size == 0)
 	{
 /*		puts("create new array");*/
-		arr->array = malloc(BUFSIZE);
+		arr->array = malloc(READ_SIZE);
 		if (!arr->array)
 			return (1);
-		arr->size = BUFSIZE;
+		arr->size = READ_SIZE;
 		arr->used = 0;
 		memset(arr->array, 0, arr->size);
 	}
@@ -93,6 +93,7 @@ int fill_array(struct resizing_string *arr, char *value, size_t size)
 	/* printf("copy array in fill_array: "); */
 	memcpy(arr->array + arr->used, value, size);
 	arr->used += size;
+	arr->array[arr->used] = '\0';
 	return (check);
 }
 
@@ -132,7 +133,6 @@ file_data_t *get_fd(struct file_data **files, int fd)
 		if (tmp->fd == fd)
 			return (tmp);
 	}
-	puts("new fd");
 	/* first time or file not seen */
 	file_data = malloc(sizeof(*file_data));
 	if (!file_data)
@@ -164,7 +164,7 @@ char *_getline(int fd)
 	struct resizing_string line; /* output */
 	struct file_data *file;
 
-	memset((void *)&line, 0, sizeof(line)), check = 0;
+	memset((void *)&line, 0, sizeof(line)), check = 0, r = 0;
 	if (fd >= 0)
 	{
 		file = get_fd(&files, fd);
@@ -181,7 +181,7 @@ char *_getline(int fd)
 			file->start = file->end + 1;
 			r = read_file(file);
 		}
-		if (!check && r > 0)
+		if (!check && r >= 0)
 		{
 			check = fill_array(&line,
 					   file->buffer + file->start,
