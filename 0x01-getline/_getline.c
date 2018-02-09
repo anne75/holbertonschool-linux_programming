@@ -22,10 +22,9 @@ int read_file(struct file_data *file)
 	{
 		memset(file->buffer, 0, READ_SIZE);
 		r = read(file->fd, file->buffer, READ_SIZE);
-		if (r >= 0)
-			file->used = r;
-		else
-			file->used = 0;
+		file->used = (r >= 0) ? r : 0;
+		if (file->used < READ_SIZE)
+			file->buffer[file->used++] = EOF;
 		file->start = 0;
 		file->end = 0;
 	}
@@ -166,6 +165,18 @@ int fill_line(struct resizing_string *line, file_data_t *file)
 	if (!file->used) /* means there is nothing to play with */
 		return (-1);
 	r = file->end - file->start;
+
+	if (file->used < READ_SIZE || file->buffer[file->start] == EOF)
+	{
+		/*
+		 * last line to read
+		 * if it is empty it means file is read
+		 * however, if the buffer is full it can
+		 * mean there is an empty line in the file
+		 */
+		if (file->end >= file->used - 1 && r == 0)
+			return (-1);
+	}
 	while (file->delim == 0 && r > 0)
 	{
 		check = fill_array(line,
@@ -180,9 +191,7 @@ int fill_line(struct resizing_string *line, file_data_t *file)
 		check = fill_array(line,
 				   file->buffer + file->start, r);
 	}
-	if (file->delim == EOF)
-		check = -1;
-	file->delim = 0, file->start = file->end + 1;
+	file->start = file->end + 1;
 	file->end = file->used;
 	return (check);
 }
@@ -207,10 +216,7 @@ char *_getline(const int fd)
 	if (fd >= 0)
 	{
 		file = get_fd(&files, fd);
-		if (!file)
-			check = 1;
-		else
-			check = fill_line(&line, file);
+		check = (!file) ? 1 : fill_line(&line, file);
 	}
 	if (fd == -1 || check == 1)
 	{
@@ -223,7 +229,9 @@ char *_getline(const int fd)
 	if (check == -1)
 	{
 		if (files == file)
+		{
 			files = file->next;
+		}
 		else
 		{
 			tmp = files;
