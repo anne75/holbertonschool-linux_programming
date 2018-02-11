@@ -62,6 +62,7 @@ int fill_array(struct resizing_string *arr, char *value, size_t size)
 {
 	int check;
 	char *new_array;
+	size_t arr_length;
 
 	if (arr->size == 0)
 	{
@@ -76,7 +77,8 @@ int fill_array(struct resizing_string *arr, char *value, size_t size)
 	check = 0;
 	if ((arr->used >= arr->size) || size >= (arr->size - arr->used))
 	{
-		new_array = malloc((2 * arr->size));
+		arr_length = arr->size + size + 1;
+		new_array = malloc((arr_length));
 		if (!new_array)
 		{
 			free(arr->array);
@@ -85,7 +87,7 @@ int fill_array(struct resizing_string *arr, char *value, size_t size)
 		memcpy(new_array, arr->array, arr->used);
 		free(arr->array);
 		arr->array = new_array;
-		arr->size *= 2;
+		arr->size = arr_length;
 	}
 	memcpy(arr->array + arr->used, value, size);
 	arr->used += size;
