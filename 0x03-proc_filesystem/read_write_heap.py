@@ -50,12 +50,14 @@ def replace_string(pid, start, end, to_replace, new):
         f.seek(start)
         chunk = f.read(end - start)
     # work with bytes.
-    to_replace = to_replace.encode("utf-8")
-    new = new.encode("utf-8")
-    if to_replace in chunk:
-        chunk = chunk.replace(to_replace, new)
-        l_t = len(to_replace)
-        l_n = len(new)
+    to_replace_b = to_replace.encode("utf-8")
+    new_b = new.encode("utf-8")
+    if to_replace_b in chunk:
+        print("[*] Found {} at {}".format(to_replace,
+                                          hex(chunk.find(to_replace_b))))
+        chunk = chunk.replace(to_replace_b, new_b)
+        l_t = len(to_replace_b)
+        l_n = len(new_b)
         if l_t > l_n:
             chunk = chunk + b"0"*(l_t - l_n)
         elif l_t < l_n:
