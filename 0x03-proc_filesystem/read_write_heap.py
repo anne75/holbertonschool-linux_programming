@@ -15,7 +15,7 @@ def read_maps(pid):
     :return: If heap found a tuple start address of heap, end address
              as integers, else: None
     """
-    print("[*] Maps: /proc/{}/Maps".format(pid))
+    print("[*] Maps: /proc/{}/maps".format(pid))
     with open("/proc/{}/maps".format(pid), mode="r", encoding="utf-8") as f:
         for line in f:
             if "[heap]" in line:
@@ -46,6 +46,7 @@ def replace_string(pid, start, end, to_replace, new):
     :param to_replace: string to find.
     :param new: string to write in place of to_replace.
     """
+    print("[*] Mem: /proc/{}/mem".format(pid))
     with open("/proc/{}/mem".format(pid), mode="rb") as f:
         f.seek(start)
         chunk = f.read(end - start)
@@ -63,13 +64,14 @@ def replace_string(pid, start, end, to_replace, new):
         elif l_t < l_n:
             chunk = chunk[:-(l_n - l_t)]
         with open("/proc/{}/mem".format(pid), mode="wb") as f:
+            print("    Overwriting the heap")
             f.seek(start)
             f.write(chunk)
 
 
 def dev_main():
     """
-    Entrypoint to read the heap of a process in dev mode.
+    Entrypoint to read the heap of the infinite_loop process.
     """
     import subprocess
     args = subprocess.check_output("ps aux | grep infinite_loop", shell=True)
@@ -81,17 +83,22 @@ def dev_main():
 
     addresses = read_maps(arg)
     if addresses:
-        replace_string(arg, addresses[0], addresses[1], "Moon", "Good Night")
+        replace_string(arg, addresses[0], addresses[1],
+                       "Hello World", "Good Night")
 
 
 def main():
     """
-    Other Entrypoint.
+    Usual Entrypoint.
+    Simulate missing argument for subprocess calls by checking
+    argument length for the strings.
     """
-    if len(sys.argv) != 4:
+    if not (len(sys.argv) == 4 and len(sys.argv[2]) and len(sys.argv[3])):
         print(
             "Usage: {} pid search_string replace_string\n"
-            "       pid: process id.".format(__file__))
+            "       pid: process id.\n"
+            "       search_string: string to look for in the heap\n"
+            "       replace_string: string to write instead".format(__file__))
         exit(1)
     addresses = read_maps(sys.argv[1])
     if addresses:
