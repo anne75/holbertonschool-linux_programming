@@ -3,7 +3,7 @@
 
 /**
  * handle_sigint - signal handle
- * signb: signal number
+ * @signb: signal number
  */
 void handle_sigint(int signb)
 {

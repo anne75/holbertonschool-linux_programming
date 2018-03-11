@@ -14,7 +14,7 @@ int sigset_init(sigset_t *set, int *signals)
 	if (check_ret)
 		return (-1);
 
-	while((signb = *signals++) != 0)
+	while ((signb = *signals++) != 0)
 	{
 		check_ret = sigaddset(set, signb);
 		if (check_ret)

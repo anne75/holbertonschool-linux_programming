@@ -18,7 +18,7 @@ void handle_sigquit(int signb, siginfo_t *info, void *context)
 
 
 /**
- * trace_signal_handler - prints the pid of process sending SIGQUIT
+ * trace_signal_sender - prints the pid of process sending SIGQUIT
  *
  * Return: 0 on success, -1 on error
  */
