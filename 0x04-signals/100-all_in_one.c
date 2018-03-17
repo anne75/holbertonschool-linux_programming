@@ -5,7 +5,7 @@
  * handle_all - print a message about the signal received.
  * @signb: signal number
  * @siginfo: struct holding signal information
- * @context: strcut holding user context information
+ * @context: struct holding user context information
  */
 void handle_all(int signb, siginfo_t *siginfo, void *context)
 {
@@ -27,8 +27,6 @@ void all_in_one(void)
 	action.sa_flags = SA_SIGINFO;
 	action.sa_sigaction = handle_all;
 	for (i = 1; i < NSIG; ++i)
-	{
 		if (i != SIGKILL && i != SIGSTOP)
 			sigaction(i, &action, NULL);
-	}
 }

@@ -17,13 +17,13 @@ void handle_sigint(int signb)
 /**
  * handle_signal - handles SIGINT by printing a message
  *
- * Return: 0 on success, 1 on failure.
+ * Return: 0 on success, -1 on failure.
  */
 int handle_signal(void)
 {
 
 	if (signal(SIGINT, handle_sigint) == SIG_ERR)
-		return (1);
+		return (-1);
 
 	return (0);
 }

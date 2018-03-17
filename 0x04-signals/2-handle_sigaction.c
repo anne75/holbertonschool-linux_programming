@@ -22,8 +22,7 @@ int handle_sigaction(void)
 	struct sigaction new;
 
 	new.sa_handler = handle_sigint;
-
+	sigemptyset(&new.sa_mask);
 	sigaction_r = sigaction(SIGINT, &new, NULL);
-
 	return (sigaction_r);
 }
