@@ -27,6 +27,5 @@ void all_in_one(void)
 	action.sa_flags = SA_SIGINFO;
 	action.sa_sigaction = handle_all;
 	for (i = 1; i < NSIG; ++i)
-		if (i != SIGKILL && i != SIGSTOP)
-			sigaction(i, &action, NULL);
+		sigaction(i, &action, NULL);
 }
