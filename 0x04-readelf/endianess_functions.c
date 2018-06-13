@@ -1,17 +1,21 @@
 #include "elf_file_header.h"
 
+
 /**
  * byte_get_little_endian - extract info stored in little endian
- * @field: data to read.
+ * @ffield: data to read.
  * @size: extend of information to extract.
  * Return: unsigned 64bit int
  */
-elf_vma byte_get_little_endian(const unsigned char *field, int size)
+elf_vma byte_get_little_endian(elf_vma ffield, int size)
 {
+	unsigned char *field;
+
+	field = (unsigned char *) &ffield;
 	switch (size)
 	{
 	case 1:
-		return (*field);
+		return ((elf_vma) *field);
 	case 2:
 		return  ((unsigned int) (field[0]))
 			|    (((unsigned int) (field[1])) << 8);
@@ -20,10 +24,10 @@ elf_vma byte_get_little_endian(const unsigned char *field, int size)
 			|    (((unsigned long) (field[1])) << 8)
 			|    (((unsigned long) (field[2])) << 16);
 	case 4:
-		return  ((unsigned long) (field[0]))
-			|    (((unsigned long) (field[1])) << 8)
-			|    (((unsigned long) (field[2])) << 16)
-			|    (((unsigned long) (field[3])) << 24);
+		return  ((elf_vma) (field[0]))
+			|    (((elf_vma) (field[1])) << 8)
+			|    (((elf_vma) (field[2])) << 16)
+			|    (((elf_vma) (field[3])) << 24);
 	case 5:
 		return  ((elf_vma) (field[0]))
 			|    (((elf_vma) (field[1])) << 8)
@@ -62,12 +66,15 @@ elf_vma byte_get_little_endian(const unsigned char *field, int size)
 
 /**
  * byte_get_big_endian - extract info stored in big endian
- * @field: data to read.
+ * @ffield: data to read.
  * @size: extend of information to extract.
  * Return: unsigned 64bit int
  */
-elf_vma byte_get_big_endian(const unsigned char *field, int size)
+elf_vma byte_get_big_endian(elf_vma ffield, int size)
 {
+	unsigned char *field;
+
+	field = (unsigned char *) &ffield;
 	switch (size)
 	{
 	case 1:
@@ -114,27 +121,7 @@ elf_vma byte_get_big_endian(const unsigned char *field, int size)
 			|   (((elf_vma) (field[1])) << 48)
 			|   (((elf_vma) (field[0])) << 56);
 	default:
-		printf("Unhandled data length: %d\n", size);
+		printf("Unhandled data length: %i\n", size);
 		abort();
-	}
-}
-
-/**
- * byte_get_64 - what is it used for?
- * @field: blob of data
- * @high: integer
- * @low: integer
- */
-void byte_get_64(const unsigned char *field, elf_vma *high, elf_vma *low)
-{
-	if (byte_get == byte_get_big_endian)
-	{
-		*high = byte_get_big_endian(field, 4);
-		*low = byte_get_big_endian(field + 4, 4);
-	}
-	else
-	{
-		*high = byte_get_little_endian(field + 4, 4);
-		*low = byte_get_little_endian(field, 4);
 	}
 }

@@ -71,10 +71,9 @@ typedef enum print_mode
 typedef uint64_t elf_vma;
 
 /* endianness_functions.c */
-elf_vma(*byte_get)(const unsigned char *, int);
-elf_vma byte_get_little_endian(const unsigned char *, int);
-elf_vma byte_get_big_endian(const unsigned char *, int);
-void byte_get_64(const unsigned char *, elf_vma *, elf_vma *);
+elf_vma(*byte_get)(elf_vma, int);
+elf_vma byte_get_little_endian(elf_vma, int);
+elf_vma byte_get_big_endian(elf_vma, int);
 #define BYTE_GET(field) byte_get((field), sizeof(field))
 
 /* header_helpers.c and *_2.c */

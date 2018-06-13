@@ -122,19 +122,19 @@ int read_32_bit_header(FILE *file, Elf_header *ehdr)
 
 	if (fread(&ehdr32.e_type, sizeof(ehdr32) - EI_NIDENT, 1, file) != 1)
 		return (1);
-	ehdr->e_type      = BYTE_GET((const unsigned char *) &ehdr32.e_type);
-	ehdr->e_machine   = BYTE_GET((const unsigned char *) &ehdr32.e_machine);
-	ehdr->e_version   = BYTE_GET((const unsigned char *) &ehdr32.e_version);
-	ehdr->e_entry     = BYTE_GET((const unsigned char *) &ehdr32.e_entry);
-	ehdr->e_phoff     = BYTE_GET((const unsigned char *) &ehdr32.e_phoff);
-	ehdr->e_shoff     = BYTE_GET((const unsigned char *) &ehdr32.e_shoff);
-	ehdr->e_flags     = BYTE_GET((const unsigned char *) &ehdr32.e_flags);
-	ehdr->e_ehsize    = BYTE_GET((const unsigned char *) &ehdr32.e_ehsize);
-	ehdr->e_phentsize = BYTE_GET((const unsigned char *) &ehdr32.e_phentsize);
-	ehdr->e_phnum     = BYTE_GET((const unsigned char *) &ehdr32.e_phnum);
-	ehdr->e_shentsize = BYTE_GET((const unsigned char *) &ehdr32.e_shentsize);
-	ehdr->e_shnum     = BYTE_GET((const unsigned char *) &ehdr32.e_shnum);
-	ehdr->e_shstrndx  = BYTE_GET((const unsigned char *) &ehdr32.e_shstrndx);
+	ehdr->e_type      = BYTE_GET(ehdr32.e_type);
+	ehdr->e_machine   = BYTE_GET(ehdr32.e_machine);
+	ehdr->e_version   = BYTE_GET(ehdr32.e_version);
+	ehdr->e_entry     = BYTE_GET(ehdr32.e_entry);
+	ehdr->e_phoff     = BYTE_GET(ehdr32.e_phoff);
+	ehdr->e_shoff     = BYTE_GET(ehdr32.e_shoff);
+	ehdr->e_flags     = BYTE_GET(ehdr32.e_flags);
+	ehdr->e_ehsize    = BYTE_GET(ehdr32.e_ehsize);
+	ehdr->e_phentsize = BYTE_GET(ehdr32.e_phentsize);
+	ehdr->e_phnum     = BYTE_GET(ehdr32.e_phnum);
+	ehdr->e_shentsize = BYTE_GET(ehdr32.e_shentsize);
+	ehdr->e_shnum     = BYTE_GET(ehdr32.e_shnum);
+	ehdr->e_shstrndx  = BYTE_GET(ehdr32.e_shstrndx);
 	return (0);
 }
 
@@ -150,18 +150,18 @@ int read_64_bit_header(FILE *file, Elf_header *ehdr)
 
 	if (fread(&ehdr64.e_type, sizeof(ehdr64) - EI_NIDENT, 1, file) != 1)
 		return (1);
-	ehdr->e_type      = BYTE_GET((const unsigned char *) &ehdr64.e_type);
-	ehdr->e_machine   = BYTE_GET((const unsigned char *) &ehdr64.e_machine);
-	ehdr->e_version   = BYTE_GET((const unsigned char *) &ehdr64.e_version);
-	ehdr->e_entry     = BYTE_GET((const unsigned char *) &ehdr64.e_entry);
-	ehdr->e_phoff     = BYTE_GET((const unsigned char *) &ehdr64.e_phoff);
-	ehdr->e_shoff     = BYTE_GET((const unsigned char *) &ehdr64.e_shoff);
-	ehdr->e_flags     = BYTE_GET((const unsigned char *) &ehdr64.e_flags);
-	ehdr->e_ehsize    = BYTE_GET((const unsigned char *) &ehdr64.e_ehsize);
-	ehdr->e_phentsize = BYTE_GET((const unsigned char *) &ehdr64.e_phentsize);
-	ehdr->e_phnum     = BYTE_GET((const unsigned char *) &ehdr64.e_phnum);
-	ehdr->e_shentsize = BYTE_GET((const unsigned char *) &ehdr64.e_shentsize);
-	ehdr->e_shnum     = BYTE_GET((const unsigned char *) &ehdr64.e_shnum);
-	ehdr->e_shstrndx  = BYTE_GET((const unsigned char *) &ehdr64.e_shstrndx);
+	ehdr->e_type      = BYTE_GET(ehdr64.e_type);
+	ehdr->e_machine   = BYTE_GET(ehdr64.e_machine);
+	ehdr->e_version   = BYTE_GET(ehdr64.e_version);
+	ehdr->e_entry     = BYTE_GET(ehdr64.e_entry);
+	ehdr->e_phoff     = BYTE_GET(ehdr64.e_phoff);
+	ehdr->e_shoff     = BYTE_GET(ehdr64.e_shoff);
+	ehdr->e_flags     = BYTE_GET(ehdr64.e_flags);
+	ehdr->e_ehsize    = BYTE_GET(ehdr64.e_ehsize);
+	ehdr->e_phentsize = BYTE_GET(ehdr64.e_phentsize);
+	ehdr->e_phnum     = BYTE_GET(ehdr64.e_phnum);
+	ehdr->e_shentsize = BYTE_GET(ehdr64.e_shentsize);
+	ehdr->e_shnum     = BYTE_GET(ehdr64.e_shnum);
+	ehdr->e_shstrndx  = BYTE_GET(ehdr64.e_shstrndx);
 	return (0);
 }
