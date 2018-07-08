@@ -38,12 +38,14 @@ int run_ptrace(int ac, char **av, char **env, void (*action)(long int value))
 	{
 		/* parent process */
 		tracer(pid, action);
+		puts("back from tracer");
 	}
 	else
 	{
 		fprintf(stderr, "error during fork");
 		return (1);
 	}
+	puts("exit success ptrace");
 	return (0);
 }
 
@@ -55,6 +57,7 @@ void tracer(pid_t pid, void (*action)(long int value))
 {
 	int status, enter_syscall;
 	long value;
+	struct user_regs_s regs;
 
 	/* the first syscall is execve which does not return */
 	enter_syscall = -1;
@@ -81,7 +84,10 @@ void tracer(pid_t pid, void (*action)(long int value))
 				enter_syscall += 1;
 				action(value);
 			}
+			value = ptrace(PTRACE_GETREGS, pid, NULL, (void *) &regs);
+			printf("regs %ld\n", regs.orig_rax);
 		}
 		ptrace(PTRACE_SYSCALL, pid, NULL, NULL);
 	}
+	puts("exit tracer");
 }
