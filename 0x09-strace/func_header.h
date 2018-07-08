@@ -33,6 +33,13 @@ struct user_regs_s
 	long int cs;
 	long int eflags;
 	long int rsp;
+	long int ss;
+	long int fs_base;
+	long int gs_base;
+	long int ds;
+	long int es;
+	long int fs;
+	long int gs;
 };
 
 
