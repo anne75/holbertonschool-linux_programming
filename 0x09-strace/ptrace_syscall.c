@@ -14,7 +14,7 @@
  * @env: environment
  * Return: 0 on success, 1 on failure
  */
-int run_ptrace(int ac, char **av, char **env, void (*action)(long int value))
+int run_ptrace(int ac, char **av, char **env, void (*action)(user_regs_t *regs))
 {
 	pid_t pid, my_pid;
 
@@ -38,14 +38,12 @@ int run_ptrace(int ac, char **av, char **env, void (*action)(long int value))
 	{
 		/* parent process */
 		tracer(pid, action);
-		puts("back from tracer");
 	}
 	else
 	{
 		fprintf(stderr, "error during fork");
 		return (1);
 	}
-	puts("exit success ptrace");
 	return (0);
 }
 
@@ -53,11 +51,11 @@ int run_ptrace(int ac, char **av, char **env, void (*action)(long int value))
  * tracer - tracer actions.
  * @pid: pid of tracee
  */
-void tracer(pid_t pid, void (*action)(long int value))
+void tracer(pid_t pid, void (*action)(user_regs_t *regs))
 {
 	int status, enter_syscall;
 	long value;
-	struct user_regs_s regs;
+	user_regs_t regs;
 
 	/* the first syscall is execve which does not return */
 	enter_syscall = -1;
@@ -77,17 +75,13 @@ void tracer(pid_t pid, void (*action)(long int value))
 		}
 		else
 		{
-/*15 is ORIG_RAX on my system with 8 bytes long */
-			value = ptrace(PTRACE_PEEKUSER, pid, 15 * 8, NULL);
+			value = ptrace(PTRACE_GETREGS, pid, NULL, (void *) &regs);
 			if (!(value == -1 && errno))
 			{
 				enter_syscall += 1;
-				action(value);
+				action(&regs);
 			}
-			value = ptrace(PTRACE_GETREGS, pid, NULL, (void *) &regs);
-			printf("regs %ld\n", regs.orig_rax);
 		}
 		ptrace(PTRACE_SYSCALL, pid, NULL, NULL);
 	}
-	puts("exit tracer");
 }

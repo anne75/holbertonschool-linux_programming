@@ -1,9 +1,20 @@
 #include "func_header.h"
+#include "syscalls.h"
 
 
 void action(user_regs_t *regs)
 {
-	printf("%lu\n", regs->orig_rax);
+	size_t arr_len, i;
+
+	arr_len = sizeof(syscalls_64_g) / sizeof(syscalls_64_g[0]);
+	for (i = 0; i < arr_len; ++i)
+	{
+		if (syscalls_64_g[i].nr == regs->orig_rax)
+		{
+			printf("%s\n", syscalls_64_g[i].name);
+			break;
+		}
+	}
 }
 
 
