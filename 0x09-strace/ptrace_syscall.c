@@ -12,17 +12,13 @@
  * @ac: number of command line arguments
  * @av: array of command line arguments
  * @env: environment
+ * @action: function used by the tracer to get info about tracee
  * Return: 0 on success, 1 on failure
  */
-int run_ptrace(int ac, char **av, char **env, void (*action)(user_regs_t *regs))
+int run_ptrace(int ac, char **av, char **env,
+	       void (*action)(user_regs_t *regs))
 {
 	pid_t pid, my_pid;
-
-	if (ac < 2)
-	{
-		puts("usage: process_to_trace");
-		return (1);
-	}
 
 	pid = fork();
 	if (pid == 0)
@@ -50,6 +46,7 @@ int run_ptrace(int ac, char **av, char **env, void (*action)(user_regs_t *regs))
 /**
  * tracer - tracer actions.
  * @pid: pid of tracee
+ * @action: function to print information about tracee
  */
 void tracer(pid_t pid, void (*action)(user_regs_t *regs))
 {
@@ -57,7 +54,7 @@ void tracer(pid_t pid, void (*action)(user_regs_t *regs))
 	long value;
 	user_regs_t regs;
 
-	/* the first syscall is execve which does not return */
+	/* the first syscall is when execve returns successfully in tracee */
 	enter_syscall = -1;
 	while (1)
 	{
@@ -75,7 +72,8 @@ void tracer(pid_t pid, void (*action)(user_regs_t *regs))
 		}
 		else
 		{
-			value = ptrace(PTRACE_GETREGS, pid, NULL, (void *) &regs);
+			value = ptrace(PTRACE_GETREGS, pid, NULL,
+				       (void *) &regs);
 			if (!(value == -1 && errno))
 			{
 				enter_syscall += 1;

@@ -1,7 +1,10 @@
 #include "func_header.h"
 #include "syscalls.h"
 
-
+/**
+ * action - print the syscall number
+ * @regs: struct holding information collected by ptrace
+ */
 void action(user_regs_t *regs)
 {
 	size_t arr_len, i;
@@ -28,6 +31,12 @@ void action(user_regs_t *regs)
 int main(int ac, char **av, char **env)
 {
 	int ret_value;
+
+	if (ac < 2)
+	{
+		puts("./strace_1 command [args...]");
+		return (1);
+	}
 
 	ret_value = run_ptrace(ac, av, env, &action);
 

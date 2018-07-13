@@ -7,16 +7,33 @@
 
 /**
  * struct user_regs_s - strcut returned by ptrace getregs
- * @r15
- * @r14
- * @r13
- * @r12
- * @rbp
- * @rbx
- * @r11
- * @r10
- * @r9
- * @r8
+ * @r15: register
+ * @r14: register
+ * @r13: register
+ * @r12: register
+ * @rbp: register
+ * @rbx: register
+ * @r11: register
+ * @r10: register
+ * @r9: register
+ * @r8: register
+ * @rax: register
+ * @rcx: register
+ * @rdx: register
+ * @rsi: register
+ * @rdi: register
+ * @orig_rax: register entering function
+ * @rip: register
+ * @cs: ??
+ * @eflags: ??
+ * @rsp: register
+ * @ss: ??
+ * @fs_base: ??
+ * @gs_base: ??
+ * @ds: ??
+ * @es: ??
+ * @fs: ??
+ * @gs: ??
  * assumes 8 byts long
  * from linux x86 sys reg
  * sys user struc does not match
