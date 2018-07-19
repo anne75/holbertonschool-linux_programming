@@ -28,7 +28,7 @@ int main(int ac, char **av, char **env)
 		return (1);
 	}
 
-	ret_value = run_ptrace(ac, av, env, &action);
+	ret_value = run_ptrace(av, env, &action);
 
 	return (ret_value);
 }

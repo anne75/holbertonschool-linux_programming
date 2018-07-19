@@ -9,13 +9,12 @@
 
 /**
  * run_ptrace - execute and trace a given command
- * @ac: number of command line arguments
  * @av: array of command line arguments
  * @env: environment
  * @action: function used by the tracer to get info about tracee
  * Return: 0 on success, 1 on failure
  */
-int run_ptrace(int ac, char **av, char **env,
+int run_ptrace(char **av, char **env,
 	       void (*action)(user_regs_t *regs))
 {
 	pid_t pid, my_pid;
