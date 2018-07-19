@@ -21,6 +21,7 @@ int main(int ac, char **av, char **env)
 {
 	int ret_value;
 
+	setbuf(stdout, NULL);
 	if (ac < 2)
 	{
 		puts("./strace_0 command [args...]");
