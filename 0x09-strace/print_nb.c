@@ -13,8 +13,11 @@ void pre_action(user_regs_t *regs)
  * post_action - print new line
  * @regs: struct holding information collected by ptrace
  */
-void post_action(__attribute__((unused)) user_regs_t *regs)
+void post_action(user_regs_t *regs)
 {
+	/* execve is only see on return */
+	if (regs->orig_rax == 59)
+			printf("%lu\n", regs->orig_rax);
 }
 
 

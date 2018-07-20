@@ -58,7 +58,7 @@ void tracer(pid_t pid, void (*pre_action)(user_regs_t *regs),
 	user_regs_t regs;
 
 	/* the first syscall is when execve returns successfully in tracee */
-	enter_syscall = -1;
+	enter_syscall = 0;
 	while (1)
 	{
 		waitpid(pid, &status, __WALL);
@@ -73,14 +73,14 @@ void tracer(pid_t pid, void (*pre_action)(user_regs_t *regs),
 			       (void *) &regs);
 		if (!(value == -1 && errno))
 		{
-			if (enter_syscall > 0)
+			if (enter_syscall == 0)
 			{
-				enter_syscall = 0;
+				enter_syscall = 1;
 				post_action(&regs);
 			}
 			else
 			{
-				enter_syscall += 1;
+				enter_syscall = 0;
 				pre_action(&regs);
 			}
 		}

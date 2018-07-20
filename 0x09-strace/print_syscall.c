@@ -15,9 +15,6 @@ void pre_action(user_regs_t *regs)
 		if (syscalls_64_g[i].nr == regs->orig_rax)
 		{
 			printf("%s", syscalls_64_g[i].name);
-			/* execve is only seen on return */
-			if (regs->orig_rax == 59)
-				putchar('\n');
 			break;
 		}
 	}
@@ -27,8 +24,11 @@ void pre_action(user_regs_t *regs)
  * post_action - print new line
  * @regs: struct holding information collected by ptrace
  */
-void post_action(__attribute__((unused)) user_regs_t *regs)
+void post_action(user_regs_t *regs)
 {
+	/* execve is only seen on return */
+	if (regs->orig_rax == 59)
+		printf("%s", syscalls_64_g[regs->orig_rax].name);
 	putchar('\n');
 }
 
@@ -51,6 +51,5 @@ int main(int ac, char **av, char **env)
 	}
 
 	ret_value = run_ptrace(av, env, &pre_action, &post_action);
-	putchar('\n');
 	return (ret_value);
 }
