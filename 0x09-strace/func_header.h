@@ -72,8 +72,10 @@ typedef struct user_regs_s
 
 
 /* ptrace_syscall.c */
-void tracer(pid_t pid, void (*action)(user_regs_t *regs));
+void tracer(pid_t pid, void (*pre_action)(user_regs_t *regs),
+	    void (*post_action)(user_regs_t *regs));
 int run_ptrace(char **av, char **env,
-	       void (*action)(user_regs_t *regs));
+	       void (*pre_action)(user_regs_t *regs),
+	       void (*post_action)(user_regs_t *regs));
 
 #endif

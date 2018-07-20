@@ -1,12 +1,20 @@
 #include "func_header.h"
 
 /**
- * action - print the syscall number
+ * pre_action - print the syscall number
  * @regs: struct holding information collected by ptrace
  */
-void action(user_regs_t *regs)
+void pre_action(user_regs_t *regs)
 {
 	printf("%lu\n", regs->orig_rax);
+}
+
+/**
+ * post_action - print new line
+ * @regs: struct holding information collected by ptrace
+ */
+void post_action(__attribute__((unused)) user_regs_t *regs)
+{
 }
 
 
@@ -28,7 +36,7 @@ int main(int ac, char **av, char **env)
 		return (1);
 	}
 
-	ret_value = run_ptrace(av, env, &action);
+	ret_value = run_ptrace(av, env, &pre_action, &post_action);
 
 	return (ret_value);
 }

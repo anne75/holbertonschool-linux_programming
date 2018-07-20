@@ -2,10 +2,10 @@
 #include "syscalls.h"
 
 /**
- * action - print the syscall number
+ * pre_action - print the syscall number
  * @regs: struct holding information collected by ptrace
  */
-void action(user_regs_t *regs)
+void pre_action(user_regs_t *regs)
 {
 	size_t arr_len, i;
 
@@ -14,12 +14,23 @@ void action(user_regs_t *regs)
 	{
 		if (syscalls_64_g[i].nr == regs->orig_rax)
 		{
-			printf("%s\n", syscalls_64_g[i].name);
+			printf("%s", syscalls_64_g[i].name);
+			/* execve is only seen on return */
+			if (regs->orig_rax == 59)
+				putchar('\n');
 			break;
 		}
 	}
 }
 
+/**
+ * post_action - print new line
+ * @regs: struct holding information collected by ptrace
+ */
+void post_action(__attribute__((unused)) user_regs_t *regs)
+{
+	putchar('\n');
+}
 
 /**
  * main - entrypoint
@@ -39,7 +50,7 @@ int main(int ac, char **av, char **env)
 		return (1);
 	}
 
-	ret_value = run_ptrace(av, env, &action);
-
+	ret_value = run_ptrace(av, env, &pre_action, &post_action);
+	putchar('\n');
 	return (ret_value);
 }

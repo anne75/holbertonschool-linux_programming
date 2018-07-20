@@ -11,11 +11,13 @@
  * run_ptrace - execute and trace a given command
  * @av: array of command line arguments
  * @env: environment
- * @action: function used by the tracer to get info about tracee
+ * @pre_action: function used by the tracer to get info about tracee
+ * @post_action: function used by the tracer to get info about tracee
  * Return: 0 on success, 1 on failure
  */
 int run_ptrace(char **av, char **env,
-	       void (*action)(user_regs_t *regs))
+	       void (*pre_action)(user_regs_t *regs),
+	       void (*post_action)(user_regs_t *regs))
 {
 	pid_t pid, my_pid;
 
@@ -32,7 +34,7 @@ int run_ptrace(char **av, char **env,
 	else if (pid > 0)
 	{
 		/* parent process */
-		tracer(pid, action);
+		tracer(pid, pre_action, post_action);
 	}
 	else
 	{
@@ -45,9 +47,11 @@ int run_ptrace(char **av, char **env,
 /**
  * tracer - tracer actions.
  * @pid: pid of tracee
- * @action: function to print information about tracee
+ * @pre_action: function to print information about tracee entering syscall
+ * @post_action: function to print information about tracee returning syscall
  */
-void tracer(pid_t pid, void (*action)(user_regs_t *regs))
+void tracer(pid_t pid, void (*pre_action)(user_regs_t *regs),
+	    void (*post_action)(user_regs_t *regs))
 {
 	int status, enter_syscall;
 	long value;
@@ -65,18 +69,19 @@ void tracer(pid_t pid, void (*action)(user_regs_t *regs))
 		{
 			continue;
 		}
-		else if (enter_syscall > 0)
+		value = ptrace(PTRACE_GETREGS, pid, NULL,
+			       (void *) &regs);
+		if (!(value == -1 && errno))
 		{
-			enter_syscall = 0;
-		}
-		else
-		{
-			value = ptrace(PTRACE_GETREGS, pid, NULL,
-				       (void *) &regs);
-			if (!(value == -1 && errno))
+			if (enter_syscall > 0)
+			{
+				enter_syscall = 0;
+				post_action(&regs);
+			}
+			else
 			{
 				enter_syscall += 1;
-				action(&regs);
+				pre_action(&regs);
 			}
 		}
 		ptrace(PTRACE_SYSCALL, pid, NULL, NULL);
