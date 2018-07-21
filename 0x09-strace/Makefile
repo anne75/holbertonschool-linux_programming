@@ -8,5 +8,5 @@ strace_0: ptrace_syscall.c print_nb.c func_header.h
 strace_1: ptrace_syscall.c print_syscall.c func_header.h syscalls.h
 	$(CC) $(FLAGS) ptrace_syscall.c print_syscall.c -o $@
 
-strace_2: ptrace_syscall.c print_syscall.c func_header.h syscalls.h
+strace_2: ptrace_syscall.c print_syscall_return.c func_header.h syscalls.h
 	$(CC) $(FLAGS) ptrace_syscall.c print_syscall_return.c -o $@
