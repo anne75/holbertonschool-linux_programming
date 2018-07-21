@@ -18,6 +18,9 @@ void pre_action(user_regs_t *regs)
 			break;
 		}
 	}
+	/* exit_group is only seen on entry */
+	if (regs->orig_rax == 231)
+		putchar('\n');
 }
 
 /**
