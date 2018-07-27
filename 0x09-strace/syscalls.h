@@ -153,7 +153,7 @@ static syscall_t const syscalls_64_g[] = {
 	{"mmap", 9, VOID_P, 6, {VOID_P, SIZE_T, INT, INT, INT, OFF_T}},
 	{"mprotect", 10, INT, 3, {VOID_P, SIZE_T, INT, -1, -1, -1}},
 	{"munmap", 11, INT, 2, {VOID_P, SIZE_T, -1, -1, -1, -1}},
-	{"brk", 12, INT, 1, {VOID_P, -1, -1, -1, -1, -1}},
+	{"brk", 12, VOID_P, 1, {VOID_P, -1, -1, -1, -1, -1}},
 	{"rt_sigaction", 13, INT, 3, {INT, STRUCT_SIGACTION_P,
 		STRUCT_SIGACTION_P, -1, -1, -1}},
 	{"rt_sigprocmask", 14, INT, 3, {INT, SIGSET_T_P, SIGSET_T_P, -1, -1,
